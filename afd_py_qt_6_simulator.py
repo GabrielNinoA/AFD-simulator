@@ -11,10 +11,185 @@ from PyQt6.QtWidgets import (
     QComboBox, QMessageBox, QTableWidget, QTableWidgetItem, QHeaderView
 )
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QPalette, QColor
 
+
+def apply_modern_dark_palette(app: QApplication):
+  
+    BG            = QColor("#0f172a")
+    BG_ELEVATED   = QColor("#111827")
+    CARD          = QColor("#111827")
+    SURFACE       = QColor("#1f2937")
+    TEXT          = QColor("#e5e7eb")
+    SUBTEXT       = QColor("#cbd5e1")
+    DISABLED_TXT  = QColor("#6b7280")
+    BORDER        = QColor("#334155")
+    HIGHLIGHT     = QColor("#4cc9f0")
+    HIGHLIGHT_D   = QColor("#3aa6c8")
+    SELECTION_BG  = QColor("#164e63")
+    LINK          = QColor("#93c5fd")
+
+    app.setStyle("Fusion")
+
+    pal = QPalette()
+    pal.setColor(QPalette.ColorRole.Window, BG)
+    pal.setColor(QPalette.ColorRole.Base, SURFACE)
+    pal.setColor(QPalette.ColorRole.AlternateBase, CARD)
+    pal.setColor(QPalette.ColorRole.Button, SURFACE)
+    pal.setColor(QPalette.ColorRole.ButtonText, TEXT)
+    pal.setColor(QPalette.ColorRole.Text, TEXT)
+    pal.setColor(QPalette.ColorRole.BrightText, TEXT)
+    pal.setColor(QPalette.ColorRole.WindowText, TEXT)
+    pal.setColor(QPalette.ColorRole.ToolTipBase, SURFACE)
+    pal.setColor(QPalette.ColorRole.ToolTipText, TEXT)
+    pal.setColor(QPalette.ColorRole.PlaceholderText, DISABLED_TXT)
+    pal.setColor(QPalette.ColorRole.Highlight, SELECTION_BG)
+    pal.setColor(QPalette.ColorRole.HighlightedText, TEXT)
+    pal.setColor(QPalette.ColorRole.Link, LINK)
+    pal.setColor(QPalette.ColorRole.Dark, BORDER)
+    pal.setColor(QPalette.ColorRole.Mid, BORDER)
+    pal.setColor(QPalette.ColorRole.Shadow, BORDER)
+    app.setPalette(pal)
+
+    app.setStyleSheet(f"""
+        QMainWindow, QWidget {{
+            background-color: {BG.name()};
+            color: {TEXT.name()};
+            selection-background-color: {SELECTION_BG.name()};
+            selection-color: {TEXT.name()};
+            font-size: 14px;
+        }}
+
+        QLabel {{
+            color: {SUBTEXT.name()};
+            font-weight: 500;
+            margin-top: 2px;
+            margin-bottom: 4px;
+        }}
+
+        QLineEdit, QTextEdit, QComboBox, QListWidget, QTableWidget {{
+            background-color: {SURFACE.name()};
+            color: {TEXT.name()};
+            border: 1px solid {BORDER.name()};
+            border-radius: 10px;
+            padding: 6px 8px;
+        }}
+        QLineEdit:focus, QTextEdit:focus, QComboBox:focus, QListWidget:focus, QTableWidget:focus {{
+            border: 1px solid {HIGHLIGHT.name()};
+            box-shadow: 0 0 0 2px {HIGHLIGHT.name()}33; /* halo sutil */
+        }}
+
+        QLineEdit[echoMode="0"]::placeholder {{
+            color: {DISABLED_TXT.name()};
+        }}
+
+        QPushButton {{
+            background-color: {HIGHLIGHT.name()};
+            color: #001018;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-weight: 600;
+        }}
+        QPushButton:hover {{
+            background-color: {HIGHLIGHT_D.name()};
+        }}
+        QPushButton:pressed {{
+            background-color: {HIGHLIGHT.name()};
+            filter: brightness(0.95);
+        }}
+        QPushButton:disabled {{
+            background-color: {BORDER.name()};
+            color: {DISABLED_TXT.name()};
+        }}
+
+        QComboBox QAbstractItemView {{
+            background-color: {SURFACE.name()};
+            color: {TEXT.name()};
+            border: 1px solid {BORDER.name()};
+            selection-background-color: {SELECTION_BG.name()};
+            selection-color: {TEXT.name()};
+            outline: none;
+        }}
+
+        QHeaderView::section {{
+            background-color: {BG_ELEVATED.name()};
+            color: {SUBTEXT.name()};
+            border: none;
+            border-bottom: 1px solid {BORDER.name()};
+            padding: 8px;
+            font-weight: 600;
+        }}
+        QTableWidget {{
+            gridline-color: {BORDER.name()};
+            alternate-background-color: {CARD.name()};
+        }}
+        QTableWidget::item {{
+            padding: 6px;
+        }}
+        QTableWidget::item:selected {{
+            background-color: {SELECTION_BG.name()};
+            color: {TEXT.name()};
+        }}
+
+        QListWidget::item {{
+            padding: 6px 8px;
+            border-radius: 8px;
+        }}
+        QListWidget::item:selected {{
+            background-color: {SELECTION_BG.name()};
+            color: {TEXT.name()};
+        }}
+
+        QTextEdit[readOnly="true"] {{
+            background-color: {CARD.name()};
+        }}
+
+        QScrollBar:vertical, QScrollBar:horizontal {{
+            background: transparent;
+            border: none;
+            margin: 0px;
+        }}
+        QScrollBar::handle:vertical, QScrollBar::handle:horizontal {{
+            background: {BORDER.name()};
+            min-height: 24px;
+            min-width: 24px;
+            border-radius: 6px;
+        }}
+        QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover {{
+            background: {HIGHLIGHT.name()};
+        }}
+        QScrollBar::add-line, QScrollBar::sub-line {{
+            background: none;
+            border: none;
+        }}
+
+        QToolTip {{
+            background-color: {SURFACE.name()};
+            color: {TEXT.name()};
+            border: 1px solid {BORDER.name()};
+            border-radius: 8px;
+            padding: 6px;
+        }}
+    """)
+
+
+
+#        LÓGICA AFD
 
 class AFD:
     def __init__(self, states=None, alphabet=None, initial_state=None, accepting_states=None, transitions=None):
+        """
+        Representación de un Autómata Finito Determinista (AFD).
+
+        Estructuras:
+        - states (Q): conjunto de estados.
+        - alphabet (Σ): lista de símbolos válidos (lista para preservar orden de iteración).
+        - initial_state (q0): estado inicial.
+        - accepting_states (F): conjunto de estados de aceptación.
+        - transitions (δ): diccionario anidado con la forma:
+              { estado_origen: { simbolo: estado_destino } }
+        """
         self.states = set(states or [])
         self.alphabet = list(alphabet or [])
         self.initial_state = initial_state
@@ -22,6 +197,18 @@ class AFD:
         self.transitions = transitions or {}  # dict: state -> {symbol: next_state}
 
     def validate(self):
+        """
+        Verifica la coherencia de la definición del AFD:
+
+        - El estado inicial debe pertenecer a Q.
+        - Todos los estados de aceptación deben pertenecer a Q (F ⊆ Q).
+        - Cada entrada de δ(s, a) debe:
+            * partir de un estado s ∈ Q,
+            * usar un símbolo a ∈ Σ,
+            * terminar en un estado destino ∈ Q.
+
+        Lanza ValueError si encuentra alguna inconsistencia.
+        """
         if self.initial_state and self.initial_state not in self.states:
             raise ValueError("Estado inicial no definido en Q")
         if not self.accepting_states.issubset(self.states):
@@ -36,42 +223,85 @@ class AFD:
                     raise ValueError(f"Estado destino '{dst}' no está en Q")
 
     def step_by_step(self, input_string):
+        """
+        Simula el AFD sobre 'input_string' y devuelve:
+        - trace: lista de pasos (i, estado_actual, símbolo_leído, estado_siguiente).
+                 Si no existe δ(estado_actual, símbolo), el estado_siguiente es None
+                 y la simulación se considera rechazada.
+        - accepted: bool indicando si el estado final pertenece a F.
+
+        Notas:
+        - Primero se valida que todos los símbolos de la cadena estén en Σ.
+        - La simulación aplica determinísticamente δ estado a estado.
+        """
+        # Verificación previa: todos los símbolos deben pertenecer al alfabeto
         for ch in input_string:
             if ch not in self.alphabet:
                 raise ValueError(f"Símbolo '{ch}' no pertenece al alfabeto")
+
         cur = self.initial_state
         trace = []
+
         for i, ch in enumerate(input_string, start=1):
+            # Si falta δ(cur, ch), registramos el fallo y terminamos
             if cur not in self.transitions or ch not in self.transitions[cur]:
                 trace.append((i, cur, ch, None))
                 return trace, False
+
             nxt = self.transitions[cur][ch]
             trace.append((i, cur, ch, nxt))
             cur = nxt
+
+        # Aceptación: el estado final debe estar en F
         accepted = cur in self.accepting_states
         return trace, accepted
 
     def generate_accepted(self, n=10, max_len=20):
+        """
+        Genera hasta 'n' cadenas aceptadas usando **BFS** (búsqueda en anchura) sobre el
+        grafo implícito de configuraciones (estado, cadena).
+
+        Estrategia:
+        - Partimos de (q0, "").
+        - Por cada nodo, expandimos un paso por cada símbolo del alfabeto (si δ existe).
+        - Cuando caemos en un estado de aceptación, registramos la cadena generada.
+        - 'max_len' limita la longitud para evitar expansión infinita en lenguajes infinitos.
+        - 'visited' evita re-explorar exactamente la misma configuración (estado, cadena).
+
+        Devuelve:
+        - Lista con las primeras cadenas aceptadas en orden aproximado de longitud creciente.
+        """
         results = []
         queue = deque([(self.initial_state, "")])
         visited = set()
+
         while queue and len(results) < n:
             state, s = queue.popleft()
+
+            # Evitar reprocesar la misma configuración exacta
             if (state, s) in visited:
                 continue
             visited.add((state, s))
+
+            # Registrar cadena si el estado actual es de aceptación
             if state in self.accepting_states and s not in results:
                 results.append(s)
                 if len(results) >= n:
                     break
+
+            # Límite de longitud para frenar crecimiento
             if len(s) >= max_len:
                 continue
+
+            # Expandir vecinos (aplicar δ si está definida)
             for symbol in self.alphabet:
                 if state in self.transitions and symbol in self.transitions[state]:
                     queue.append((self.transitions[state][symbol], s + symbol))
+
         return results
 
     def to_dict(self):
+        """Serializa la definición del AFD a un diccionario listo para JSON."""
         return {
             "states": list(self.states),
             "alphabet": list(self.alphabet),
@@ -82,7 +312,9 @@ class AFD:
 
     @staticmethod
     def from_dict(d):
-        return AFD(d.get('states', []), d.get('alphabet', []), d.get('initial_state'), d.get('accepting_states', []), d.get('transitions', {}))
+        """Crea un AFD a partir de un diccionario (operación inversa de to_dict)."""
+        return AFD(d.get('states', []), d.get('alphabet', []), d.get('initial_state'),
+                   d.get('accepting_states', []), d.get('transitions', {}))
 
 
 EXAMPLES = {
@@ -138,13 +370,12 @@ class MainWindow(QMainWindow):
 
         self.afd = AFD()
 
-        # Main layout
+        
         root = QWidget()
         main_layout = QHBoxLayout()
         root.setLayout(main_layout)
         self.setCentralWidget(root)
 
-        # Left: definición del AFD
         left = QVBoxLayout()
         main_layout.addLayout(left, 2)
 
@@ -197,7 +428,6 @@ class MainWindow(QMainWindow):
         file_btns.addWidget(btn_load)
         left.addLayout(file_btns)
 
-        # Middle: evaluación y generación
         mid = QVBoxLayout()
         main_layout.addLayout(mid, 2)
 
@@ -224,7 +454,6 @@ class MainWindow(QMainWindow):
         gen_row.addWidget(self.gen_list)
         mid.addLayout(gen_row)
 
-        # Right: info y ayuda
         right = QVBoxLayout()
         main_layout.addLayout(right, 1)
 
@@ -242,7 +471,7 @@ class MainWindow(QMainWindow):
 
         self.info_out.append("Bienvenido al Simulador AFD. Define el autómata a la izquierda y pulsa 'Aplicar definición'.")
 
-    # ---------- GUI helpers ----------
+   
     def add_trans_row(self):
         r = self.trans_table.rowCount()
         self.trans_table.insertRow(r)
@@ -253,7 +482,6 @@ class MainWindow(QMainWindow):
             self.trans_table.removeRow(r)
 
     def show_examples_menu(self):
-        # Simple selector: lista de ejemplos
         items = list(EXAMPLES.keys())
         item, ok = QFileDialog.getOpenFileName(self, "Selecciona un archivo JSON de ejemplo (opcional)")
         if item:
@@ -265,7 +493,6 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"No se pudo cargar: {e}")
         else:
-            # si no se escogió archivo, abrimos una pequeña ventana con la lista (ya en la derecha)
             QMessageBox.information(self, "Ejemplos", "Puedes cargar un ejemplo doble-click en la lista de la derecha.")
 
     def load_example_from_list(self, item):
@@ -286,7 +513,8 @@ class MainWindow(QMainWindow):
             idx = self.initial_combo.findText(d.get('initial_state'))
             if idx >= 0:
                 self.initial_combo.setCurrentIndex(idx)
-        # transitions
+
+        # Carga de δ desde el diccionario de ejemplo
         self.trans_table.setRowCount(0)
         for src, mapping in d.get('transitions', {}).items():
             for sym, dst in mapping.items():
@@ -297,27 +525,41 @@ class MainWindow(QMainWindow):
                 self.trans_table.setItem(r, 2, QTableWidgetItem(dst))
 
     def apply_definition(self):
+        """
+        Construye un objeto AFD a partir de lo ingresado en la interfaz:
+        - Parseo de Q, Σ, q0, F.
+        - Construcción de δ leyendo cada fila de la tabla de transiciones.
+        - Sincronización del combo del estado inicial.
+        - Validación de la definición (puede lanzar errores).
+        """
         try:
+            # Parseo de entradas de texto -> listas limpias
             states = [s.strip() for s in self.states_input.text().split(',') if s.strip()]
             alphabet = [a.strip() for a in self.alpha_input.text().split(',') if a.strip()]
             initial_state = self.initial_combo.currentText() if self.initial_combo.count() > 0 else None
             accepting_states = [s.strip() for s in self.accept_input.text().split(',') if s.strip()]
-            # build transitions
+
+            # -------- Construcción de δ (función de transición) --------
             transitions = {}
             for r in range(self.trans_table.rowCount()):
                 src_item = self.trans_table.item(r, 0)
                 sym_item = self.trans_table.item(r, 1)
                 dst_item = self.trans_table.item(r, 2)
+                # Ignora filas incompletas
                 if not src_item or not sym_item or not dst_item:
                     continue
+
                 src = src_item.text().strip()
                 sym = sym_item.text().strip()
                 dst = dst_item.text().strip()
+
                 if src not in transitions:
                     transitions[src] = {}
+                # Si se repite (src, sym), la última definición prevalece
                 transitions[src][sym] = dst
+            # -----------------------------------------------------------
 
-            # update initial combo (in case states changed)
+            # Actualiza combo del estado inicial con los estados vigentes
             self.initial_combo.clear()
             for s in states:
                 self.initial_combo.addItem(s)
@@ -326,6 +568,7 @@ class MainWindow(QMainWindow):
                 if idx >= 0:
                     self.initial_combo.setCurrentIndex(idx)
 
+            # Construcción y validación del AFD
             self.afd = AFD(states, alphabet, self.initial_combo.currentText(), accepting_states, transitions)
             self.afd.validate()
             self.info_out.append("Definición aplicada correctamente.")
@@ -333,6 +576,11 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error en la definición", str(e))
 
     def evaluate_input(self):
+        """
+        Ejecuta la simulación del AFD para la cadena ingresada y
+        muestra un trazado paso a paso. Si falta alguna transición
+        durante la ejecución, se informa la razón del rechazo.
+        """
         s = self.input_eval.text().strip()
         if not self.afd or not self.afd.states:
             QMessageBox.warning(self, "AFD no definido", "Aplica una definición de AFD antes de evaluar.")
@@ -346,6 +594,7 @@ class MainWindow(QMainWindow):
             for step in trace:
                 i, cur, ch, nxt = step
                 if nxt is None:
+                    # Falta δ(cur, ch): rechazo inmediato con explicación
                     self.trace_out.append(f"{i}. Desde el estado ({cur}) con el símbolo '{ch}' no existe transición -> RECHAZADA")
                     self.trace_out.append("Resultado: RECHAZADA")
                     return
@@ -358,6 +607,11 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error de evaluación", str(e))
 
     def generate_strings(self):
+        """
+        Genera y muestra hasta 10 cadenas aceptadas usando el BFS del AFD.
+        Si el lenguaje es vacío o el límite de longitud corta la búsqueda,
+        se informa en la lista de resultados.
+        """
         if not self.afd or not self.afd.states:
             QMessageBox.warning(self, "AFD no definido", "Aplica una definición de AFD antes de generar cadenas.")
             return
@@ -396,7 +650,7 @@ class MainWindow(QMainWindow):
             with open(fname, 'r', encoding='utf-8') as f:
                 data = json.load(f)
             self.populate_definition_from_dict(data)
-            # also apply
+            # También aplicamos la definición para validar y dejar listo el AFD
             self.apply_definition()
             self.info_out.append(f"Cargado AFD desde: {fname}")
         except Exception as e:
@@ -405,6 +659,7 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+    apply_modern_dark_palette(app)
     w = MainWindow()
     w.show()
     return app.exec()
@@ -412,21 +667,3 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
-
-# --------------------------
-# Ejemplos JSON (usa como referencia o guarda en archivos .json):
-# 1) Paridad de 1s (par)
-# {"states": ["q0", "q1"], "alphabet": ["0","1"], "initial_state":"q0",
-#  "accepting_states":["q0"], "transitions": {"q0":{"0":"q0","1":"q1"}, "q1":{"0":"q1","1":"q0"}} }
-
-# 2) Terminan en 01
-# {"states":["q0","q1","q2"], "alphabet":["0","1"], "initial_state":"q0",
-#  "accepting_states":["q2"], "transitions": {"q0":{"0":"q1","1":"q0"}, "q1":{"0":"q1","1":"q2"}, "q2":{"0":"q1","1":"q0"}} }
-
-# 3) Solo ceros (0+)
-# {"states":["q0","q1"], "alphabet":["0","1"], "initial_state":"q0",
-#  "accepting_states":["q0"], "transitions": {"q0":{"0":"q0","1":"q1"}, "q1":{"0":"q1","1":"q1"}} }
-
-# 4) Binarios con al menos un 1
-# {"states":["q0","q1"], "alphabet":["0","1"], "initial_state":"q0",
-#  "accepting_states":["q1"], "transitions": {"q0":{"0":"q0","1":"q1"}, "q1":{"0":"q1","1":"q1"}} }
