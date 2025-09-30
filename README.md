@@ -44,7 +44,6 @@ Ejecuta el simulador con:
 ```bash
 py AFD_PyQt6_Simulator.py
 ```
-O abre el ejecutable.
 
 Esto abrirá la ventana principal del simulador.
 
